@@ -1,0 +1,56 @@
+<!-- popup.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Verificar Solicitações</title>
+  <style>
+  body {
+    font-family: Arial, sans-serif;
+    padding: 10px;
+    width: 200px;
+    background-color: #f9f9f9; /* cor de fundo clara */
+    color: #333; /* cor do texto escura */
+  }
+
+  #checkNow {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+  #checkNow:disabled {
+    background-color: #aaa;
+    cursor: not-allowed;
+  }
+
+  .spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #ccc;
+    border-top: 2px solid #333;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    vertical-align: middle;
+    margin-left: 8px;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>
+
+</head>
+<body>
+  <h4> iOTY Monitor </h4>
+  <button id="checkNow">Verificar Agora</button>
+
+  <script src="popup.js"></script>
+</body>
+</html>

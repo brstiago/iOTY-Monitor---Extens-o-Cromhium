@@ -1,0 +1,18 @@
+{
+  "manifest_version": 3,
+  "name": "iOTY Monitor",
+  "version": "1.0",
+  "description": "iOTY Monitor.",
+  "permissions": ["alarms", "notifications", "storage", "scripting", "activeTab", "cookies" ],
+  "host_permissions": [
+    "https://ioty.linearsistemas.com.br/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "icon.png"
+
+  }
+}  
