@@ -1,12 +1,13 @@
 // Quando a extensão é instalada, cria o alarme
 chrome.runtime.onInstalled.addListener(() => {
   chrome.alarms.create('checkForNewRequests', { periodInMinutes: 1 });
+  console.log("🟢 Extensão Instalada com Sucesso!<>");
 });
 
-// Executa verificação quando o alarme dispara
+// Inicia verificação automática
 chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === 'checkForNewRequests') {
-    console.log("⏰ Verificação automática iniciada via alarm.");
+    console.log("⏰ Verificação automática iniciada via alarm...");
     checkForNewRequests();
   }
 });
@@ -14,7 +15,7 @@ chrome.alarms.onAlarm.addListener((alarm) => {
 // Executa verificação manual
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "checkNow") {
-    console.log("🟢 Verificação manual iniciada via popup.");
+    console.log("🟢 Verificação manual iniciada via popup...");
 
     chrome.storage.local.get(['lastCount'], (result) => {
       const lastCount = result.lastCount || 0;
@@ -36,6 +37,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
+// Função para buscar as informações do iOTY
 async function checkForNewRequests() {
   try {
     const response = await fetch("https://ioty.linearsistemas.com.br/desenv/requests?utf8=%E2%9C%93&conditions%5Brequest_type_id.it%5D%5B%5D=1&conditions%5Bstatus_id.it%5D%5B%5D=1", {
@@ -51,18 +53,23 @@ async function checkForNewRequests() {
     console.log("📄 HTML retornado:", text);
 
     const match = text.match(/\$\("#requests-table"\)\.html\("([\s\S]*?)"\);/);
+    console.log("🟢 Executou a função checkForNewRequests...");
 
     if (!match) {
-      console.log("❌ Regex não encontrou correspondência no HTML.");
+      chrome.notifications.create('', {
+        type: 'basic',
+        iconUrl: 'icon.png',
+        title: '❌ Opa, foi mal. Não consegui verificar',
+        message: '❌ Ioty não respondeu',
+        priority: 2
+      });
+      console.log("❌ Regex não encontrou correspondência no HTML...</>");
       return;
     }
 
-    // Etapa de desescape mais robusta
+    // Desencapar o HTML retornado
     const escapedHtmlRaw = match[1];
-
     const unescapedHtml = escapedHtmlRaw
-      .replace(/\\"/g, '"')
-      .replace(/\\n/g, '\n')
       .replace(/\\"/g, '"')
       .replace(/\\n/g, '')
       .replace(/\\\\/g, '\\')
@@ -71,13 +78,11 @@ async function checkForNewRequests() {
       .replace(/&gt;/g, '>')
       .replace(/&amp;/g, '&');
 
-    console.log("📄 HTML desescapado:", unescapedHtml);
+    console.log("📄 HTML desencapando...", unescapedHtml);
 
-    // Conta as linhas da tabela (quantos <tr-request>) tem:
     const rowsCount = (unescapedHtml.match(/<tr id="tr-request-\d+" class="">/g) || []).length;
     console.log(`🔍 Total de <tr>: ${rowsCount}`);
 
-    // Recupera o último valor salvo para comparar
     chrome.storage.local.get(['lastCount'], (result) => {
       const lastCount = result.lastCount || 0;
 
@@ -86,34 +91,38 @@ async function checkForNewRequests() {
           type: 'basic',
           iconUrl: 'icon.png',
           title: '📥 Novas Solicitações!',
-          message: `🔔 Você tem ${rowsCount - lastCount} nova(s) solicitação(ões), o total agora é: ${rowsCount}! `,
+          message: `🔔 Você tem ${rowsCount - lastCount} nova(s) solicitação(ões), o total agora é: ${rowsCount}!`,
           priority: 2
         });
-        
       } else if (rowsCount < lastCount) {
         chrome.notifications.create('', {
           type: 'basic',
           iconUrl: 'icon.png',
           title: '📥 Menos Solicitações Pendentes!',
-          message: `🔔 Agora você tem ${lastCount} solicitação(ões) pendentes!`,
+          message: `🔔 Agora você tem ${rowsCount} solicitação(ões) pendentes!`,
           priority: 2
         });
-          
-       } else {
+      } else {
         chrome.notifications.create('', {
           type: 'basic',
           iconUrl: 'icon.png',
-          title: '📭 Nenhuma novidade',
-          message: '✅ Nenhuma nova solicitação encontrada! `',
+          title: '📥 Nenhuma novidade',
+          message: '✅ Nenhuma nova solicitação encontrada!',
           priority: 2
         });
+
+        console.log("🟢 Executou o bloco de Condições...")
+
       }
 
       // Salva o novo valor
       chrome.storage.local.set({ lastCount: rowsCount });
+      console.log(`✅ Armazenou novo valor de <tr>: ${rowsCount}`);
     });
 
   } catch (e) {
     console.error("❌ Erro ao verificar novas solicitações:", e);
   }
+
+  console.log("🟢 Deu tudo certo! </>")
 }

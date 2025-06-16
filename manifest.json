@@ -3,7 +3,7 @@
   "name": "iOTY Monitor",
   "version": "1.0",
   "description": "iOTY Monitor.",
-  "permissions": ["alarms", "notifications", "storage", "scripting", "activeTab", "cookies" ],
+  "permissions": ["alarms", "notifications", "storage", "scripting", "activeTab", "cookies", "tabs" ],
   "host_permissions": [
     "https://ioty.linearsistemas.com.br/*"
   ],
@@ -14,5 +14,17 @@
     "default_popup": "popup.html",
     "default_icon": "icon.png"
 
+  },  
+  "web_accessible_resources":[
+    {
+      "resources": ["sons.mp3", "icon.png"],
+      "matches": ["<all_urls>"]  
   }
-}  
+ ],
+ "content_scripts": [
+  {
+    "matches": ["https://ioty.linearsistemas.com.br/*"],
+    "js": ["content.js"]
+  }
+]
+}   

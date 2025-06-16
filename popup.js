@@ -1,4 +1,3 @@
-// popup.js
 const button = document.getElementById('checkNow');
 
 button.addEventListener('click', () => {
