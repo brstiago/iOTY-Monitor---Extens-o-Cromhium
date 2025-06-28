@@ -13,3 +13,5 @@ Essa pequena automação trouxe um ganho real de produtividade e tranquilidade n
 ☑️ Validar rapidamente uma ideia com foco no problema;
 ☑️Aplicar conceitos de fetch, chrome.storage, chrome.notifications e agendamento com setInterval;
 ☑️Exercitar a utilização de tecnologias para entregar uma solução funcional em poucos dias;
+
+![image](https://github.com/user-attachments/assets/83ec4851-6c56-4569-adc2-18bb9a42bb68)
